@@ -1,3 +1,4 @@
+from django.core.serializers import serialize
 from django.forms import model_to_dict
 from rest_framework import generics
 from django.shortcuts import render
@@ -9,21 +10,26 @@ from rest_framework.response import Response
 
 class CarAPIView(APIView):
     def get(self, request):
-        # Сначала добыли кверисет, а потом набор конкретных значений
-        lst = Car.objects.all().values()
-        return Response({'posts': list(lst)})
+        c = Car.objects.all()
+        # Сериализатору передаем весь кверисет из таблицы.
+        # many - говорит о том, что все записи будут сериализованы
+        # data - переводит данные в словарь
+        return Response({'posts': CarSerializer(c, many=True).data})
     
     # Метод добавляет новую запись в таблицу Car и возвращает то, что было добавлено
     def post(self, request):
+        serializer = CarSerializer(data=request.data)
+        # Валидация происходит в сериализаторе (например ограничение поля)
+        # Чтобы в postMan выводились подробные исключения (поле title не определено)
+        serializer.is_valid(raise_exception=True)
+
         post_new = Car.objects.create(
             title=request.data['title'],
             content=request.data['content'],
             cat_id=request.data['cat_id']
         )
 
-        # model_to_dict - встроенная функция которая преобразовывает
-        # объект (post_new) класса Car в словарь
-        return Response({'post': model_to_dict(post_new)})
+        return Response({'post': CarSerializer(post_new).data})
 
 
 
