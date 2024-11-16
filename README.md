@@ -47,3 +47,31 @@ File -> New Tab (Создаем новую вкладку) -> Вставляем
 Очень удобно в использовании, но важно знать, как все работает внутри джанго, ведь проекты бывают разные.
 
 Настройка в settings - Глобальные настройки DRF (передача данных в JSON формате, разрешение/запрет действий CRUD в браузере)
+
+
+Это если не использовать роутеры и писать каждый путь отдельно
+# path('api/v1/carlist/', CarViewSet.as_view({'get': 'list'})), :
+'get' - метод для обработки запроса
+'list' - метод, который будет вызываться в самом ViewSet для обработки GET запроса.
+
+
+Создаем объект роутера
+# router = routers.SimpleRouter()
+регистрируем его.
+1 аргумент - префикс для набора маршрутов (car)
+2 аргумент - указать класс вью сета
+# router.register(r'car', CarViewSet)
+
+router - позволяет реализовывать в одну строку два маршрута - список записей и конкретная запись по pk. Это происходит автоматически благодаря SimpleRouter.
+# path('api/v1/', include(router.urls)),  # http://127.0.0.1:8000/api/v1/car/ или http://127.0.0.1:8000/api/v1/car/7/
+
+
+Чтобы убрать дублирование кода у разных методов (удаления, обновления, чтения, редактирования, добавления) нужно импортировать "viewsets.ModelViewSet" связанный с моделью.
+class CarViewSet(viewsets.ModelViewSet):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+Теперь изменения в urls и views помогают реализовывать все операции CRUD в нескольких строк кода.
+Сам класс ModelViewSet внутри DRF наследуется от следующих миксинов:
+# class ModelViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin, GenericViewSet):
+Эти миксины можно в ручную указывать в наследниках и выбирать какие нужны, какие нет. Например убрать миксин DestroyModelMixin, тогда функционал удаления пропадет.

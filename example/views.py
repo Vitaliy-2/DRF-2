@@ -1,7 +1,8 @@
 from gettext import install
+from django import views
 from django.core.serializers import serialize
 from django.forms import model_to_dict
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from django.shortcuts import render
 from .serializers import CarSerializer
 from .models import Car
@@ -9,23 +10,37 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-# Наследование от конкретных представлений, отвечающих за определенные действия
-# Чтений (GET) и добавление записей (POST)
-class CarAPIList(generics.ListCreateAPIView):
+# Минимализация кода благодаря наследованию от viewsets.ModelViewSet
+# где происходит наследования от миксинов реализующие весь функционал CRUD
+class CarViewSet(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+
+
+
+
+
+
+
+
+
+# Наследование от конкретных представлений, отвечающих за определенные действия
+# Чтений (GET) и добавление записей (POST)
+# class CarAPIList(generics.ListCreateAPIView):
+#     queryset = Car.objects.all()
+#     serializer_class = CarSerializer
 
 
 # Редактирование записи (PUT, Patch)
-class CarAPIUpdate(generics.UpdateAPIView):
-    queryset = Car.objects.all()
-    serializer_class = CarSerializer
+# class CarAPIUpdate(generics.UpdateAPIView):
+#     queryset = Car.objects.all()
+#     serializer_class = CarSerializer
 
 
 # CRUD операции в одном классе
-class CarAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Car.objects.all()
-    serializer_class = CarSerializer
+# class CarAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Car.objects.all()
+#     serializer_class = CarSerializer
 
 
 # class CarAPIView(APIView):
