@@ -9,6 +9,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
+# Наследование от конкретных представлений, отвечающих за определенные действия
+# Чтений (GET) и добавление записей (POST)
+class CarAPIList(generics.ListCreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+
 class CarAPIView(APIView):
     def get(self, request):
         c = Car.objects.all()
