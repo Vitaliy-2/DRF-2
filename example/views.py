@@ -1,3 +1,4 @@
+from gettext import install
 from django.core.serializers import serialize
 from django.forms import model_to_dict
 from rest_framework import generics
@@ -15,21 +16,45 @@ class CarAPIView(APIView):
         # many - говорит о том, что все записи будут сериализованы
         # data - переводит данные в словарь
         return Response({'posts': CarSerializer(c, many=True).data})
-    
+
     # Метод добавляет новую запись в таблицу Car и возвращает то, что было добавлено
     def post(self, request):
         serializer = CarSerializer(data=request.data)
         # Валидация происходит в сериализаторе (например ограничение поля)
         # Чтобы в postMan выводились подробные исключения (поле title не определено)
         serializer.is_valid(raise_exception=True)
+        #  save автоматически вызовет метод create из сериализатора
+        serializer.save()
 
-        post_new = Car.objects.create(
-            title=request.data['title'],
-            content=request.data['content'],
-            cat_id=request.data['cat_id']
-        )
+        return Response({'post': serializer.data})
 
-        return Response({'post': CarSerializer(post_new).data})
+    # Редактирование записей в БД
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT not allowed"})
+
+        try:
+            instance = Car.objects.get(pk=pk)
+
+        except:
+            return Response({"error": "Object does not exists"})
+
+        # передаем данные, которые нужно изменить и объект который будем менять
+        serializer = CarSerializer(data=request.data, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        # метод save автоматически вызывает метод update в сериализаторе
+        serializer.save()
+        return Response({"post": serializer.data})
+    
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method DELETE not allowed"})
+        
+        Car.objects.get(pk=pk).delete()
+
+        return Response({"post": "delete post " + str(pk)})
 
 
 
