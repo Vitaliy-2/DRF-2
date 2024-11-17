@@ -5,70 +5,82 @@ from django.core.serializers import serialize
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import CarSerializer
 from .models import Car, Category
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-# Минимализация кода благодаря наследованию от viewsets.ModelViewSet
-# где происходит наследования от миксинов реализующие весь функционал CRUD
-class CarViewSet(viewsets.ModelViewSet):
-    # queryset = Car.objects.all()
-    serializer_class = CarSerializer
-
-    # Чтобы не отображать все данные из БД можно переопределить кверисет
-    # который должен возвращать список определенных данных
-    # Если запрос будет с конкретным pk, то нужно отобразить одну запись,
-    # для этого требуется проверка
-    def get_queryset(self):
-        pk = self.kwargs.get("pk")
-
-        if not pk:
-            return Car.objects.all()[:3]  # Первые 3 записи из БД
-
-        return Car.objects.filter(pk=pk)
-
-
-    # Добавляем функционал - расширяем третий путь для вывода списка категорий
-    # Парметр methods - указываем метод обращения
-    # detail - при фолсе отобразиться именно список, а не одна категория
-    @action(methods=['get'], detail=False)
-    def categoryes(self, request):
-        cats = Category.objects.all()
-        return Response({'cats': [c.name for c in cats]})
-    
-    # Отображение одной категории по pk
-    @action(methods=['get'], detail=True)
-    def category(self, request, pk=None):
-        cats = Category.objects.get(pk=pk)
-        return Response({'cats': cats.name})
-
-
-
-
-
-
-
-
+# РЕАЛИЗАЦИЯ ФУНКЦИОНАЛА ЧЕРЕЗ РАЗНЫЕ КЛАССЫ ДЛЯ НАГЛЯДНОСТИ ПО РАЗГРАНИЧЕНИЮ ПРАВ
 
 # Наследование от конкретных представлений, отвечающих за определенные действия
 # Чтений (GET) и добавление записей (POST)
-# class CarAPIList(generics.ListCreateAPIView):
-#     queryset = Car.objects.all()
-#     serializer_class = CarSerializer
+class CarAPIList(generics.ListCreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    # Установим ограничения, что только авторизованные пользователи смогут длобавлять запись
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
 
 # Редактирование записи (PUT, Patch)
-# class CarAPIUpdate(generics.UpdateAPIView):
-#     queryset = Car.objects.all()
-#     serializer_class = CarSerializer
+class CarAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    # Добавим права что редактировать можно только свои записи
+    permission_classes = (IsOwnerOrReadOnly, )
 
 
 # CRUD операции в одном классе
-# class CarAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Car.objects.all()
+class CarAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    permission_classes = (IsAdminOrReadOnly, )
+
+
+
+
+
+# РЕАЛИЗАЦИЯ ВСЕХ ДЕЙСТВИЙ ЧЕРЕЗ ОДИН КЛАСС
+
+# # Минимализация кода благодаря наследованию от viewsets.ModelViewSet
+# # где происходит наследования от миксинов реализующие весь функционал CRUD
+# class CarViewSet(viewsets.ModelViewSet):
+#     # queryset = Car.objects.all()
 #     serializer_class = CarSerializer
+
+#     # Чтобы не отображать все данные из БД можно переопределить кверисет
+#     # который должен возвращать список определенных данных
+#     # Если запрос будет с конкретным pk, то нужно отобразить одну запись,
+#     # для этого требуется проверка
+#     def get_queryset(self):
+#         pk = self.kwargs.get("pk")
+
+#         if not pk:
+#             return Car.objects.all()[:3]  # Первые 3 записи из БД
+
+#         return Car.objects.filter(pk=pk)
+
+
+#     # Добавляем функционал - расширяем третий путь для вывода списка категорий
+#     # Парметр methods - указываем метод обращения
+#     # detail - при фолсе отобразиться именно список, а не одна категория
+#     @action(methods=['get'], detail=False)
+#     def categoryes(self, request):
+#         cats = Category.objects.all()
+#         return Response({'cats': [c.name for c in cats]})
+    
+#     # Отображение одной категории по pk
+#     @action(methods=['get'], detail=True)
+#     def category(self, request, pk=None):
+#         cats = Category.objects.get(pk=pk)
+#         return Response({'cats': cats.name})
+
+
+
+
+
 
 
 # class CarAPIView(APIView):

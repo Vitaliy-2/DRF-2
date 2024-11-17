@@ -9,6 +9,9 @@ from rest_framework.parsers import JSONParser
 
 # Сериализатор связанный с моделью
 class CarSerializer(serializers.ModelSerializer):
+    # Создается скрытое поле (Hidden) и по дефолту этот юзер
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Car
         fields = "__all__"

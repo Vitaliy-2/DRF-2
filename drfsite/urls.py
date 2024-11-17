@@ -17,23 +17,36 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from example.views import CarViewSet
+from example.views import CarAPIList, CarAPIUpdate, CarAPIDestroy
 
 
-# Создаем объект роутера
-router = routers.DefaultRouter()
-# регистрируем его.
-# 1 аргумент - префикс для набора маршрутов (car)
-# 2 аргумент - указать класс вью сета
-# router.register(r'car', CarViewSet, basename='car') # можно менять название путей таким образом
-# basename - обязательный параметр, если во views в классе не указан параметр queryset
-router.register(r'car', CarViewSet, basename='car')
-print(router.urls)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(router.urls)),  # http://127.0.0.1:8000/api/v1/car/ или http://127.0.0.1:8000/api/v1/car/7/
-
-    # path('api/v1/carlist/', CarViewSet.as_view({'get': 'list'})),
-    # path('api/v1/carlist/<int:pk>/', CarViewSet.as_view({'put': 'update'})),
+    path('api/v1/car/', CarAPIList.as_view()),
+    path('api/v1/car/<int:pk>/', CarAPIUpdate.as_view()),
+    path('api/v1/cardelete/<int:pk>/', CarAPIDestroy.as_view()),
 ]
+
+
+
+
+
+
+# # Создаем объект роутера
+# router = routers.DefaultRouter()
+# # регистрируем его.
+# # 1 аргумент - префикс для набора маршрутов (car)
+# # 2 аргумент - указать класс вью сета
+# # router.register(r'car', CarViewSet, basename='car') # можно менять название путей таким образом
+# # basename - обязательный параметр, если во views в классе не указан параметр queryset
+# router.register(r'car', CarViewSet, basename='car')
+# print(router.urls)
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('api/v1/', include(router.urls)),  # http://127.0.0.1:8000/api/v1/car/ или http://127.0.0.1:8000/api/v1/car/7/
+
+#     # path('api/v1/carlist/', CarViewSet.as_view({'get': 'list'})),
+#     # path('api/v1/carlist/<int:pk>/', CarViewSet.as_view({'put': 'update'})),
+# ]

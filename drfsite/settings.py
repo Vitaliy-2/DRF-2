@@ -130,5 +130,12 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',  # способ передачи данных между сервером и пользователем (JSON)
         'rest_framework.renderers.BrowsableAPIRenderer',  # настройка разрешения отображения действия в браузере
-    ]
+    ],
+
+    # Настройка ограничения прав для всего DRF
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # Доступ к любым данным будет предоставлен только авторизованным пользователям
+    ],
 }
+
+# IsAuthenticated
