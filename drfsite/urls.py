@@ -21,11 +21,14 @@ from example.views import CarViewSet
 
 
 # Создаем объект роутера
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 # регистрируем его.
 # 1 аргумент - префикс для набора маршрутов (car)
 # 2 аргумент - указать класс вью сета
-router.register(r'car', CarViewSet)
+# router.register(r'car', CarViewSet, basename='car') # можно менять название путей таким образом
+# basename - обязательный параметр, если во views в классе не указан параметр queryset
+router.register(r'car', CarViewSet, basename='car')
+print(router.urls)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

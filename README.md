@@ -75,3 +75,11 @@ class CarViewSet(viewsets.ModelViewSet):
 Сам класс ModelViewSet внутри DRF наследуется от следующих миксинов:
 # class ModelViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin, GenericViewSet):
 Эти миксины можно в ручную указывать в наследниках и выбирать какие нужны, какие нет. Например убрать миксин DestroyModelMixin, тогда функционал удаления пропадет.
+
+Роутеры DefaultRouter и SimpleRouter
+При отработке DefaultRouter в пути без приставки "car" отобразится страница с рабочими маршрутами, то есть даем понять пользователю какие маршруты работают.
+А SimpleRouter не рендарит этот путь без приставки "car", нельзя посмотреть какие маршруты есть.
+Это их отличия.
+DefaultRouter - формирует список маршрутов и связывает их с определенным юсетом.
+
+Можно с помощью декоратора action создавать новый маршрут в классе во views
