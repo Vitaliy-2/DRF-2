@@ -5,12 +5,13 @@ from django.core.serializers import serialize
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets
 from django.shortcuts import render
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import CarSerializer
 from .models import Car, Category
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
 
 
 # РЕАЛИЗАЦИЯ ФУНКЦИОНАЛА ЧЕРЕЗ РАЗНЫЕ КЛАССЫ ДЛЯ НАГЛЯДНОСТИ ПО РАЗГРАНИЧЕНИЮ ПРАВ
@@ -29,7 +30,9 @@ class CarAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
     # Добавим права что редактировать можно только свои записи
-    permission_classes = (IsOwnerOrReadOnly, )
+    permission_classes = (IsAuthenticated, )
+    # указываем какой метод аутентификации тут будет использован (по токену)
+    # authentication_classes = (TokenAuthentication, )
 
 
 # CRUD операции в одном классе

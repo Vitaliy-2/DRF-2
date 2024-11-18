@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework import routers
 from example.views import CarAPIList, CarAPIUpdate, CarAPIDestroy
 
@@ -28,6 +28,11 @@ urlpatterns = [
     path('api/v1/car/', CarAPIList.as_view()),
     path('api/v1/car/<int:pk>/', CarAPIUpdate.as_view()),
     path('api/v1/cardelete/<int:pk>/', CarAPIDestroy.as_view()),
+    # Пакет Djoser
+    # для авторизации + показывает доступный адрес 
+    path('api/v1/auth/', include('djoser.urls')),
+    # авторизация по токену
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
 ]
 
 

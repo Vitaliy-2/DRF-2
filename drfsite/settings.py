@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'example.apps.ExampleConfig',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -135,6 +137,13 @@ REST_FRAMEWORK = {
     # Настройка ограничения прав для всего DRF
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # Доступ к любым данным будет предоставлен только авторизованным пользователям
+    ],
+
+    # Настройка разрешения DRF на различные аутентификации
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',  # По токенам
+        'rest_framework.authentication.BasicAuthentication',  # По сессиям (по дефолту)
+        'rest_framework.authentication.SessionAuthentication',  # По сессиям (по дефолту)
     ],
 }
 
