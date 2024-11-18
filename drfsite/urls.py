@@ -23,6 +23,8 @@ from example.views import CarAPIList, CarAPIUpdate, CarAPIDestroy
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # Два маршрута появится для авторизации и выхода
+    path('api/v1/drf-auth/', include('rest_framework.urls')),
     path('api/v1/car/', CarAPIList.as_view()),
     path('api/v1/car/<int:pk>/', CarAPIUpdate.as_view()),
     path('api/v1/cardelete/<int:pk>/', CarAPIDestroy.as_view()),

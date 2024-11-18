@@ -20,7 +20,7 @@ from rest_framework.response import Response
 class CarAPIList(generics.ListCreateAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
-    # Установим ограничения, что только авторизованные пользователи смогут длобавлять запись
+    # Установим ограничения, что только авторизованные пользователи смогут добавлять запись
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
 
