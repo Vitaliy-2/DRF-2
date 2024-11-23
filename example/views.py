@@ -31,7 +31,7 @@ class CarAPIUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = CarSerializer
     # Добавим права что редактировать можно только свои записи
     permission_classes = (IsAuthenticated, )
-    # указываем какой метод аутентификации тут будет использован (по токену)
+    # указываем какой метод аутентификации тут будет использован (только по токену)
     # authentication_classes = (TokenAuthentication, )
 
 

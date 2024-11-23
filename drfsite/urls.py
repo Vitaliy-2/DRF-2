@@ -17,7 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 from example.views import CarAPIList, CarAPIUpdate, CarAPIDestroy
+
 
 
 
@@ -29,10 +35,15 @@ urlpatterns = [
     path('api/v1/car/<int:pk>/', CarAPIUpdate.as_view()),
     path('api/v1/cardelete/<int:pk>/', CarAPIDestroy.as_view()),
     # Пакет Djoser
-    # для авторизации + показывает доступный адрес 
+    # показывает доступный адрес 
     path('api/v1/auth/', include('djoser.urls')),
     # авторизация по токену
     re_path(r'^auth/', include('djoser.urls.authtoken')),
+
+    # Доступ через JWT-токены
+    path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
 
 
