@@ -130,6 +130,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Способ управления глобальными настройками DRF
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 2,
+
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',  # способ передачи данных между сервером и пользователем (JSON)
         'rest_framework.renderers.BrowsableAPIRenderer',  # настройка разрешения отображения действия в браузере

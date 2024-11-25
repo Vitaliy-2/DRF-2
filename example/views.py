@@ -5,6 +5,7 @@ from django.core.serializers import serialize
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets
 from django.shortcuts import render
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import CarSerializer
@@ -12,6 +13,15 @@ from .models import Car, Category
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
+
+
+class CarAPIListPagination(PageNumberPagination):
+    page_size = 3
+    # В гет запросе через амперсант можно на стороне клиента указывать сколько отображать записей на странице
+    # ?page_size=4
+    page_size_query_param = 'page_size'
+    # 4 но не более 10000
+    max_page_size = 10000
 
 
 # РЕАЛИЗАЦИЯ ФУНКЦИОНАЛА ЧЕРЕЗ РАЗНЫЕ КЛАССЫ ДЛЯ НАГЛЯДНОСТИ ПО РАЗГРАНИЧЕНИЮ ПРАВ
@@ -23,6 +33,7 @@ class CarAPIList(generics.ListCreateAPIView):
     serializer_class = CarSerializer
     # Установим ограничения, что только авторизованные пользователи смогут добавлять запись
     permission_classes = (IsAuthenticatedOrReadOnly, )
+    pagination_class = CarAPIListPagination
 
 
 # Редактирование записи (PUT, Patch)
